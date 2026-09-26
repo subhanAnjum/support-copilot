@@ -1,0 +1,30 @@
+# Orchestration
+langgraph==0.2.60
+langchain==0.3.13
+langchain-openai==0.2.14
+langchain-community==0.3.13
+langchain-chroma==0.1.4
+
+# Vector store
+chromadb==0.5.23
+
+# Fine-tuning
+transformers==4.46.3
+peft==0.14.0
+datasets==3.2.0
+torch==2.5.1
+accelerate==1.2.1
+scikit-learn==1.6.0
+
+# Evaluation
+ragas==0.2.10
+
+# Serving
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+python-dotenv==1.0.1
+
+# Testing
+pytest==8.3.4
+httpx==0.28.1

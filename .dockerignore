@@ -1,0 +1,14 @@
+venv/
+.venv/
+.env
+.git/
+.vscode/
+**/__pycache__/
+**/*.pyc
+**/.DS_Store
+.pytest_cache/
+chroma_db/
+classifier_checkpoints/
+app/classifier/lora_adapter.*/
+data/tickets/public_tickets.jsonl
+app/eval/eval_report.csv

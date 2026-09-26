@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: support-copilot
+    runtime: docker
+    dockerfilePath: ./docker/Dockerfile
+    dockerContext: .
+    plan: standard  # starter (512 MB) runs out of memory
+    healthCheckPath: /health
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: LLM_PROVIDER
+        value: openai
+      - key: CHAT_MODEL
+        value: gpt-4o-mini
+      - key: EMBEDDING_MODEL
+        value: text-embedding-3-small
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "10"

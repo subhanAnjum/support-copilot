@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FitTrack Support Copilot</title>
+<style>
+  :root {
+    --bg: #f6f5f2;
+    --surface: #ffffff;
+    --surface-2: #f0efeb;
+    --text: #1d1c1a;
+    --muted: #6b6862;
+    --border: #e2e0da;
+    --accent: #1f6f5c;
+    --accent-text: #ffffff;
+    --user-bubble: #1f6f5c;
+    --user-text: #ffffff;
+    --billing: #9a5b00;   --billing-bg: #fbeed8;
+    --technical: #1c5fa8; --technical-bg: #e1ecf8;
+    --account: #6b45a8;   --account-bg: #ece5f7;
+    --danger: #a8322a;    --danger-bg: #f9e3e1;
+    --radius: 14px;
+    --font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151514;
+      --surface: #1e1e1c;
+      --surface-2: #262623;
+      --text: #ecebe7;
+      --muted: #a09d96;
+      --border: #34332f;
+      --accent: #4fb89c;
+      --accent-text: #0e1f1a;
+      --user-bubble: #2b6b5a;
+      --user-text: #f2faf7;
+      --billing: #f0b35c;   --billing-bg: #3a2c16;
+      --technical: #7fb2ea; --technical-bg: #1a2a3d;
+      --account: #b79cea;   --account-bg: #2c2340;
+      --danger: #f08b82;    --danger-bg: #3d1f1c;
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 var(--font);
+    display: flex;
+    flex-direction: column;
+    padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .wrap { width: 100%; max-width: 780px; margin: 0 auto; padding-inline: 16px; }
+  header .wrap { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-block: 14px; flex-wrap: wrap; }
+  h1 { font-size: 1.05rem; margin: 0; letter-spacing: -0.01em; }
+  h1 span { color: var(--muted); font-weight: 400; }
+  .pipeline { color: var(--muted); font-size: 0.8rem; font-family: var(--mono); }
+
+  main { flex: 1; overflow-y: auto; }
+  #thread { display: flex; flex-direction: column; gap: 18px; padding-block: 24px; }
+
+  .intro { color: var(--muted); }
+  .intro p { margin: 0 0 12px; }
+  .examples { display: flex; flex-wrap: wrap; gap: 8px; }
+  .examples button {
+    font: inherit; font-size: 0.85rem;
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 6px 12px; cursor: pointer; text-align: left;
+  }
+  .examples button:hover { border-color: var(--accent); }
+
+  .msg { max-width: 88%; }
+  .msg.user { align-self: flex-end; }
+  .msg.user .bubble { background: var(--user-bubble); color: var(--user-text); border-bottom-right-radius: 4px; }
+  .msg.bot { align-self: flex-start; }
+  .msg.bot .bubble { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+  .bubble { padding: 10px 14px; border-radius: var(--radius); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg.error .bubble { background: var(--danger-bg); color: var(--danger); border-color: transparent; }
+
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 8px; font-size: 0.78rem; color: var(--muted); }
+  .pill { font-weight: 600; border-radius: 999px; padding: 2px 9px; text-transform: capitalize; }
+  .pill.billing { color: var(--billing); background: var(--billing-bg); }
+  .pill.technical { color: var(--technical); background: var(--technical-bg); }
+  .pill.account { color: var(--account); background: var(--account-bg); }
+  .pill.other { color: var(--muted); background: var(--surface-2); }
+  .source { font-family: var(--mono); background: var(--surface-2); border-radius: 6px; padding: 1px 6px; }
+
+  .typing { display: inline-flex; gap: 4px; padding: 14px; }
+  .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite ease-in-out; }
+  .typing i:nth-child(2) { animation-delay: 0.15s; }
+  .typing i:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .typing i { animation: none; opacity: 0.6; } }
+
+  footer { border-top: 1px solid var(--border); background: var(--surface); }
+  form { display: flex; gap: 10px; align-items: flex-end; padding-block: 12px; }
+  textarea {
+    flex: 1; min-width: 0; resize: none;
+    font: inherit; color: var(--text); background: var(--bg);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px 12px; max-height: 160px;
+  }
+  textarea:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  #send {
+    font: inherit; font-weight: 600;
+    background: var(--accent); color: var(--accent-text);
+    border: 0; border-radius: 12px; padding: 10px 18px; cursor: pointer;
+  }
+  #send:disabled { opacity: 0.5; cursor: default; }
+  .hint { font-size: 0.75rem; color: var(--muted); padding-bottom: 10px; margin: 0; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>FitTrack Support <span>Copilot</span></h1>
+    <div class="pipeline" aria-label="Pipeline">classify → retrieve → respond</div>
+  </div>
+</header>
+
+<main id="scroller">
+  <div class="wrap">
+    <div id="thread" aria-live="polite">
+      <div class="intro" id="intro">
+        <p>Describe a problem with your FitTrack account, billing or the app. Each reply shows how the ticket was classified and which help articles the answer is based on.</p>
+        <div class="examples">
+          <button type="button">I was charged twice for my premium subscription this month</button>
+          <button type="button">The app keeps crashing when I log a workout</button>
+          <button type="button">How do I change the email on my account?</button>
+          <button type="button">My workouts aren't syncing to my tablet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <form id="composer">
+      <textarea id="input" rows="1" maxlength="2000" placeholder="Describe your issue…" aria-label="Your ticket" required></textarea>
+      <!-- TODO: mic button -> transcribe -> submitTicket() -->
+      <button id="send" type="submit">Send</button>
+    </form>
+    <p class="hint">Enter to send · Shift+Enter for a new line</p>
+  </div>
+</footer>
+
+<script>
+  const thread = document.getElementById("thread");
+  const scroller = document.getElementById("scroller");
+  const form = document.getElementById("composer");
+  const input = document.getElementById("input");
+  const sendBtn = document.getElementById("send");
+  const intro = document.getElementById("intro");
+  const KNOWN_CATEGORIES = ["billing", "technical", "account"];
+
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  function addMessage(role, text) {
+    const msg = el("div", `msg ${role}`);
+    msg.appendChild(el("div", "bubble", text));
+    thread.appendChild(msg);
+    scroller.scrollTop = scroller.scrollHeight;
+    return msg;
+  }
+
+  function addMeta(msg, data) {
+    const meta = el("div", "meta");
+    const cat = KNOWN_CATEGORIES.includes(data.category) ? data.category : "other";
+    meta.appendChild(el("span", `pill ${cat}`, data.category));
+    if (data.classifier_confidence != null) {
+      meta.appendChild(el("span", null, `${Math.round(data.classifier_confidence * 100)}% confident`));
+    }
+    meta.appendChild(el("span", null, data.classifier_method === "lora" ? "LoRA classifier" : "keyword fallback"));
+    for (const src of data.sources_cited || []) {
+      meta.appendChild(el("span", "source", src.replace(/\.md$/, "")));
+    }
+    meta.appendChild(el("span", null, `${(data.latency_ms / 1000).toFixed(1)}s`));
+    msg.appendChild(meta);
+  }
+
+  function showTyping() {
+    const msg = el("div", "msg bot");
+    const bubble = el("div", "bubble typing");
+    bubble.setAttribute("aria-label", "Copilot is replying");
+    bubble.append(el("i"), el("i"), el("i"));
+    msg.appendChild(bubble);
+    thread.appendChild(msg);
+    scroller.scrollTop = scroller.scrollHeight;
+    return msg;
+  }
+
+  function errorText(status, body) {
+    if (status === 429) return body?.detail || "Too many requests, please try again in a minute.";
+    if (status === 422) return "Please write at least a few words (up to 2,000 characters).";
+    return "Something went wrong sending your ticket. Please try again.";
+  }
+
+  async function submitTicket(text) {
+    text = text.trim();
+    if (!text || sendBtn.disabled) return;
+    intro.hidden = true;
+    addMessage("user", text);
+    sendBtn.disabled = true;
+    const typing = showTyping();
+    try {
+      const res = await fetch("/ticket", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const body = await res.json().catch(() => null);
+      typing.remove();
+      if (!res.ok) {
+        addMessage("bot error", errorText(res.status, body));
+        return;
+      }
+      addMeta(addMessage("bot", body.response), body);
+    } catch {
+      typing.remove();
+      addMessage("bot error", "Couldn't reach the server. Check your connection and try again.");
+    } finally {
+      sendBtn.disabled = false;
+      scroller.scrollTop = scroller.scrollHeight;
+      input.focus();
+    }
+  }
+
+  function autosize() {
+    input.style.height = "auto";
+    input.style.height = `${input.scrollHeight}px`;
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = input.value;
+    input.value = "";
+    autosize();
+    submitTicket(text);
+  });
+  input.addEventListener("input", autosize);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+  for (const btn of intro.querySelectorAll(".examples button")) {
+    btn.addEventListener("click", () => submitTicket(btn.textContent));
+  }
+</script>
+</body>
+</html>

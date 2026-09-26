@@ -1,0 +1,14 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+chroma_db/
+classifier_checkpoints/
+# lora_adapter/ is committed, old versions aren't
+app/classifier/lora_adapter.*/
+data/tickets/public_tickets.jsonl
+app/eval/eval_report.csv
+.pytest_cache/
+*.egg-info/

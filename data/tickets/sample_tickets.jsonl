@@ -1,0 +1,28 @@
+{"text": "I was charged twice for my premium subscription this month, please refund one", "category": "billing"}
+{"text": "My card was declined but I still see two pending charges", "category": "billing"}
+{"text": "How do I cancel my subscription before the next renewal date", "category": "billing"}
+{"text": "I upgraded to premium and got charged an extra prorated amount, why", "category": "billing"}
+{"text": "Can I get a refund for the month I forgot to cancel", "category": "billing"}
+{"text": "My workouts from my phone aren't showing up on my tablet", "category": "technical"}
+{"text": "The AI coaching feedback never generated after my run yesterday", "category": "technical"}
+{"text": "The app keeps crashing every time I try to log a new workout", "category": "technical"}
+{"text": "I'm not getting any push notifications even though they're enabled", "category": "technical"}
+{"text": "Sync seems stuck, my data hasn't updated in over an hour", "category": "technical"}
+{"text": "I never got the password reset email after requesting it", "category": "account"}
+{"text": "How do I change the email address linked to my account", "category": "account"}
+{"text": "I have two accounts and want to merge my workout history", "category": "account"}
+{"text": "I want to permanently delete my account and all my data right now", "category": "account"}
+{"text": "I signed up with Apple and also with email, now I have duplicate accounts", "category": "account"}
+{"text": "My account was hacked and someone changed my password, I need help immediately", "category": "account", "urgent": true}
+{"text": "I think my card details were leaked through your app, this is serious", "category": "billing", "urgent": true}
+{"text": "I've been billed £500 instead of £9.99, this needs fixing right now", "category": "billing", "urgent": true}
+{"text": "The app deleted three months of my workout history with no warning", "category": "technical", "urgent": true}
+{"text": "I'm locked out of my account and my trainer needs my data for a competition tomorrow", "category": "account", "urgent": true}
+{"text": "Why was I billed again after I already cancelled last week", "category": "billing"}
+{"text": "Is there a discount if I pay yearly instead of monthly", "category": "billing"}
+{"text": "The app freezes on the home screen after the latest update", "category": "technical"}
+{"text": "Coaching feedback is stuck on loading for over ten minutes", "category": "technical"}
+{"text": "I can't log in even after resetting my password twice", "category": "account"}
+{"text": "Please delete my account, I no longer want to use FitTrack", "category": "account"}
+{"text": "Someone is accessing my account from a device I don't recognize", "category": "account", "urgent": true}
+{"text": "I was double charged AND my account got locked at the same time", "category": "billing", "urgent": true}
