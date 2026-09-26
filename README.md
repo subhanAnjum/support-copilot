@@ -126,4 +126,4 @@ OpenAI key.
 - Urgency detection + re-enable escalation
 - Voice input in the web UI
 - Hybrid search (BM25 + dense)
-- LangSmith tracing
+
