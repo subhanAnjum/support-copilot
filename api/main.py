@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field
 
 from app.graph import run_ticket
@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("support-copilot")
 
 WEB_DIR = Path(__file__).resolve().parent.parent / "web"
+INDEX_HTML = (WEB_DIR / "index.html").read_text()
 RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "10"))
 
 
@@ -62,9 +63,18 @@ class TicketResponse(BaseModel):
     latency_ms: int
 
 
-@app.get("/", include_in_schema=False)
-def index():
-    return FileResponse(WEB_DIR / "index.html")
+# HEAD is allowed so link-preview crawlers (LinkedIn etc.) don't get a 405
+@app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)
+def index(request: Request):
+    # og: tags need absolute URLs
+    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
+    base_url = f"{proto}://{request.headers.get('host', request.url.netloc)}"
+    return HTMLResponse(INDEX_HTML.replace("{{BASE_URL}}", base_url))
+
+
+@app.api_route("/og-image.png", methods=["GET", "HEAD"], include_in_schema=False)
+def og_image():
+    return FileResponse(WEB_DIR / "og-image.png", media_type="image/png")
 
 
 @app.get("/health")
